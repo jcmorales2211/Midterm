@@ -9,7 +9,11 @@ library(magick)
 #WEB Read and resize
 hoop<- image_read('https://www.pump.org/wp-content/uploads/2018/04/FT9FPNZHVR7USAM.LARGE_.jpg')
 print(hoop) 
-image_scale(hoop, "250")
+#change height
+image_scale(hoop, "x250")
+#change width
+image_scale(hoop,"300")
+
 
 #local resize
 ball<- readJPEG("bball.jpg", native = TRUE)
