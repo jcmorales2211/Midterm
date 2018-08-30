@@ -1,98 +1,71 @@
-install.packages("jpeg")
 install.packages("magick")
-install.packages("imager")
-install.packages("adimpro")
+install.packages("OpenImageR")
+library(magick)
 source("http://bioconductor.org/biocLite.R")
 biocLite("EBImage")
+library("EBImage")
 library(EBImage)
-library(jpeg)
-library(magick)
-library(imager)
-library(adimpro)
+library("OpenImageR")
 
-#WEB Read and resize
-hoop<- image_read('https://www.pump.org/wp-content/uploads/2018/04/FT9FPNZHVR7USAM.LARGE_.jpg')
-print(hoop) 
-#change height and weight
-image_scale(hoop, "300x300")
-image_convert(hoop,type = 'Grayscale')
-
-#local read
-ball<- readJPEG("bball.jpg", native = TRUE)
-ball
-plot(0:1,0:1, type = "n", ann= FALSE, axes = FALSE)
-rasterImage(ball,0,0,1,1)
-
-#local resize
-ball<- readImage("bball.jpg")
-dim(ball)[1:2]
-
-#specific resizing
-ballImage <- resize(ball, w = 1000, h = 1000)
-
-# show the scaled image
-display(ballImage)
-
-colorMode(hoop) = Grayscale
-ball
-display(hoop)
-#functions
-#1.Read an Image Lovally and thru WEB
-
-#local read
-readlocal<- function(x){
-  image<- readJPEG(x, native = TRUE)
-  image
-  plot(0:1,0:1, type = "n", ann= FALSE, axes = FALSE)
-  rasterImage(image,0,0,1,1)
-}
-
-readlocal("bball.jpg")
-
-#web read
-readWeb<- function(x){
-  image<- image_read(x)
-  print(image) 
-}
-readWeb('https://www.pump.org/wp-content/uploads/2018/04/FT9FPNZHVR7USAM.LARGE_.jpg')
-
-#2-Image Augmentation
-#2.1 Resize
-
-#local resize
-
-localResize<-function(x,width,height){
-  getImage<- readImage(x)
+##LOCAL Images
+image <- image_read("bball.jpg")
+dim(image)[1:2]
+display(image)
+resize(image, w =500, h=500)
+resizeLocal <- function(image, width, height){
+  getImage <- image_read(image)
   dim(getImage)[1:2]
-  setImage <- resize(getImage, w = width, h = height)
+  img <- resize(image, w =width, h=height)
+  display(img)
   
-  # show the scaled image
-  display(setImage)
 }
-localResize("bball.jpg",250,250)
+resizeLocal("bball.jpg",300,300)
 
-#web resize
-webResize<-function(x,width,height){
-  image<- image_read(x)
-  image_scale(image, width)
-  image_scale(image, height)
+grayscaleLocal <- function(image, x1){
+  if(x1== TRUE){
+    colorMode(image) = Grayscale
+    display(image, all=TRUE)
+  }
+  else if(x1 == FALSE){
+    colorMode(image) = Color
+    display(image, all=TRUE)
+  }
+  else{
+    print("Input TRUE or FALSE only")
+  }
 }
-webResize('https://www.pump.org/wp-content/uploads/2018/04/FT9FPNZHVR7USAM.LARGE_.jpg',500,500)
+grayscale1(image, TRUE)
 
-#2.2 Grayscale
-grayImage<- function(x,y){
-  image<- image_read(x)
-  if( y == TRUE){
-  image_convert(image,type = 'Grayscale')
-  }else(image)
+inverter <- function(image, x1){
+  invertImg <- translate(rotate(image, x1), c(50, 0))
+  display(invertImg)
 }
-localgray<-function(x,y){
-  grayimage<-colorMode(x) = Grayscale
-  display(grayimage)
-}
-grayImage('https://www.pump.org/wp-content/uploads/2018/04/FT9FPNZHVR7USAM.LARGE_.jpg', TRUE)
-grayImage("bball.jpg", TRUE)
+inverter(image, 90)
 
-#2.3 Invert image
-image<- image_read("bball.jpg")
-rotate.image(image, angle = 90, compress=NULL)
+##WEB Images
+webImage <- image_read('https://www.pump.org/wp-content/uploads/2018/04/FT9FPNZHVR7USAM.LARGE_.jpg')
+webImage
+
+resizeWeb <- function(webImage, x1){
+  img <- image_resize(webImage, x1)
+  img
+}
+resizeWeb(webImage,"300x300")
+
+grayscale2 <- function(webImage, x1){
+  if(x1== TRUE){
+    image_convert(webImage,type = 'Grayscale')
+  }
+  else if(x1 == FALSE){
+    webImage
+  }
+  else{
+    print("Input TRUE or FALSE only")
+  }
+}
+grayscale2(webImage, TRUE)
+
+webInverter <- function(img2, x1){
+  image_rotate(img2, x1)
+}
+webInverter(webImage, 90)

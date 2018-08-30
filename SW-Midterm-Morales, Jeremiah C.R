@@ -15,11 +15,12 @@ image_scale(hoop, "x250")
 image_scale(hoop,"300")
 
 
-#local resize
+#local resize reading
 ball<- readJPEG("bball.jpg", native = TRUE)
 ball
 plot(0:1,0:1, type = "n", ann= FALSE, axes = FALSE)
 rasterImage(pict,0,0,1,1)
+display(ball)
 
 ball<- readImage("bball.jpg")
 dim(ball)[1:2]
